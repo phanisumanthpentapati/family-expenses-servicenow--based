@@ -1,1 +1,25 @@
 
+(function executeRule(current, previous /*null when async*/) {
+
+    var familyexpenses = new GlideRecord('u_family_expenses');
+    familyexpenses.addQuery('u_date', current.u_date);
+    familyexpenses.query();
+
+    if (familyexpenses.next())
+    {
+        familyexpenses.u_amount += current.u_expense;
+        familyexpenses.u_expense_details += ">" + current.u_comments + ": " +
+            "Rs." + current.u_expense + "/-";
+        familyexpenses.update();
+    }
+    else
+    {
+        var newfamilyexpenses = new GlideRecord('u_family_expenses');
+        newfamilyexpenses.u_date = current.u_date;
+        newfamilyexpenses.u_amount = current.u_expense;
+        newfamilyexpenses.u_expense_details += ">" + current.u_comments + ": " +
+            "Rs." + current.u_expense + "/-";
+        newfamilyexpenses.insert();
+    }
+
+})(current, previous);
